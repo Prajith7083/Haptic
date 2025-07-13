@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>F1 Trailer Haptic Experience</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: "Segoe UI", sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    video {
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+    button {
+      background-color: #e10600;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .warning {
+      font-size: 14px;
+      color: #ffcc00;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>F1 Trailer Haptic Experience</h1>
+  <p>Feel the thrill. Only on Android phones with vibration support.</p>
+
+  <video id="trailer" controls preload="auto">
+    <source src="f1-trailer.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <br />
+  <button onclick="startExperience()">Start Haptic Trailer</button>
+
+  <p class="warning">⚠️ Haptic feedback only works on Android with supported browsers (e.g., Chrome).</p>
+
+  <script>
+    const video = document.getElementById("trailer");
+    const hapticMoments = [
+      { time: 2.5, pattern: [100, 50, 100] },   // Example vibration at 2.5s
+      { time: 5.0, pattern: [300] },            // Example at 5s
+      { time: 8.2, pattern: [200, 100, 200] },  // Example at 8.2s
+      { time: 12.0, pattern: [500] },           // Add more scenes
+      { time: 15.0, pattern: [100, 100, 100] }
+    ];
+
+    let triggered = new Set();
+
+    function startExperience() {
+      if (navigator.vibrate) {
+        navigator.vibrate(50); // Dummy vibration to activate
+      } else {
+        alert("Your device does not support vibration.");
+      }
+      video.play();
+    }
+
+    video.addEventListener("timeupdate", () => {
+      const currentTime = video.currentTime;
+      hapticMoments.forEach(({ time, pattern }, index) => {
+        if (!triggered.has(index) && currentTime >= time) {
+          if (navigator.vibrate) {
+            navigator.vibrate(pattern);
+            triggered.add(index);
+          }
+        }
+      });
+    });
+
+    video.addEventListener("ended", () => {
+      triggered.clear(); // Reset for replay
+    });
+  </script>
+
+</body>
+</html>
